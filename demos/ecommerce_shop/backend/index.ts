@@ -40,12 +40,16 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
   }),
 );
 app.use(bodyParser.json());
 // By supplying a secret to the cookie parser, we are enabling signed cookies
 // https://github.com/expressjs/cookie-parser?tab=readme-ov-file#cookieparsersecret-options
 // In production, use a separate secret from the database encryption key!
+if (!process.env.DATABASE_ENCRYPTION_KEY) {
+  throw new Error("DATABASE_ENCRYPTION_KEY is missing in .env");
+}
 app.use(cookieParser(process.env.DATABASE_ENCRYPTION_KEY));
 app.use("/public", express.static(path.join(__dirname, "public")));
 

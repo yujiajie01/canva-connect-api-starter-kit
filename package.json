@@ -22,5 +22,8 @@
     "generate": "cd client && npm run generate",
     "demo:ecommerce": "cd demos/ecommerce_shop && npm start",
     "demo:playground": "cd demos/playground && npm start"
+  },
+  "dependencies": {
+    "@ngrok/ngrok": "^1.4.1"
   }
 }

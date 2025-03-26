@@ -43,7 +43,7 @@ const endpoints = {
 
 globals.redirectUri = new URL(
   endpoints.REDIRECT,
-  process.env.BACKEND_URL,
+  process.env.BACKEND_URL
 ).toString();
 
 router.get(endpoints.REDIRECT, async (req, res) => {
@@ -58,9 +58,13 @@ router.get(endpoints.REDIRECT, async (req, res) => {
   }
 
   try {
+    console.log("Received state:", state);
+    console.log("Stored state:", req.signedCookies[OAUTH_STATE_COOKIE_NAME]);
+
     if (state !== req.signedCookies[OAUTH_STATE_COOKIE_NAME]) {
+      console.error("State mismatch");
       throw new Error(
-        `Invalid state ${state} != ${req.signedCookies[OAUTH_STATE_COOKIE_NAME]}`,
+        `Invalid state ${state} != ${req.signedCookies[OAUTH_STATE_COOKIE_NAME]}`
       );
     }
 
@@ -84,6 +88,10 @@ router.get(endpoints.REDIRECT, async (req, res) => {
       },
     });
 
+    console.log("OAuth code received:", authorizationCode);
+    console.log("User cookies:", req.signedCookies);
+    console.log("Token exchange result:", result);
+
     if (result.error) {
       console.error(result.error);
       return res.status(result.response.status).json(result.error);
@@ -92,7 +100,7 @@ router.get(endpoints.REDIRECT, async (req, res) => {
     const token = result.data;
     if (!token) {
       throw new Error(
-        "No token returned when exchanging oauth code for token, but no error was returned either.",
+        "No token returned when exchanging oauth code for token, but no error was returned either."
       );
     }
 
@@ -172,7 +180,7 @@ router.get(endpoints.AUTHORIZE, async (req, res) => {
       .cookie(
         OAUTH_CODE_VERIFIER_COOKIE_NAME,
         codeVerifier,
-        cookieConfiguration,
+        cookieConfiguration
       )
       .redirect(url)
   );

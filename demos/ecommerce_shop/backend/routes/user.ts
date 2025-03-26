@@ -10,8 +10,12 @@ const endpoints = {
 };
 
 router.get(endpoints.TOKEN, async (req, res) => {
-  // Only our FE may ask for the user's token
+  // 添加调试日志
+  console.log('Received origin:', req.headers.origin);
+  console.log('Expected origin:', process.env.FRONTEND_URL);
+  
   if (req.headers.origin !== process.env.FRONTEND_URL) {
+    console.error('Origin mismatch detected');
     return res.status(401).send("Unauthorized");
   }
   return res.status(200).send(req.token);
